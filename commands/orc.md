@@ -17,8 +17,8 @@ Follow the orchestrator protocol exactly:
 6. Dispatch logical tracing subagents with a Run Mode Contract. Tracing is report-only unless explicitly limited to planning artifacts.
 7. Preserve discovery and trace reports under the planning module.
 8. Invoke `planning-with-files` as the planning authority.
-9. Instruct `planning-with-files` to keep this run's planning artifacts in the selected planning module/folder, never overwrite existing planning files, and produce the detailed artifacts required for the selected mode.
-10. Create or update `context_packet.md` from discovery, trace, clarifying answers, and verified source references.
+9. Instruct `planning-with-files` to keep this run's planning artifacts in the selected planning module/folder, never overwrite existing planning files, and produce the detailed artifacts required for the selected mode, including telemetry planning artifacts when telemetry is enabled or requested.
+10. Create or update `context_packet.md` from discovery, trace, clarifying answers, and verified source references. Create or update telemetry run manifest and optimization notes when telemetry is enabled or requested.
 11. Follow the loaded skill's actual instructions for planning artifacts.
 12. For `audit-roadmap`, `greenfield-plan`, or `review-only`, dispatch holistic review of the assessment/plan, then stop and summarize without implementation.
 13. For `implementation-after-approval`, summarize the plan, risks, waves, and decision points, then ask for approval before source edits.
@@ -31,4 +31,4 @@ Follow the orchestrator protocol exactly:
 20. If integration changes files or context, update `context_packet.md` and dispatch focused final evaluation workers.
 21. Dispatch holistic plan evaluator to assess mode fit, planning quality, context handoff quality, and final result.
 22. Inform the user clearly when blockers, failures, large rewrite opportunities, or product tradeoffs require a decision.
-23. Summarize result, including whether implementation was intentionally skipped by mode.
+23. Summarize result, including whether implementation was intentionally skipped by mode and where telemetry was captured or expected to be captured.

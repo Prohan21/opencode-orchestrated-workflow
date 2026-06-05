@@ -1,0 +1,6 @@
+.opencode/telemetry/
+telemetry/
+node_modules/
+package-lock.json
+bun.lock
+*.log

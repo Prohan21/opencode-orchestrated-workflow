@@ -87,6 +87,8 @@ All modes should maintain `context_packet.md`, `decision_log.md`, `risk_register
 
 `implementation` and approved `implementation-after-approval` should add `implementation_wave_manifest.md` and `acceptance_criteria.md`.
 
+Telemetry-enabled runs should add `telemetry/run_manifest.md` and `telemetry/optimization_notes.md`.
+
 Planning is not complete until a new agent with no hidden context could execute or evaluate the next phase from the artifacts alone.
 
 ## Taproot context packet
@@ -118,6 +120,9 @@ planning/<run-name>/
   decision_log.md
   risk_register.md
   validation_strategy.md
+  telemetry/
+    run_manifest.md
+    optimization_notes.md
   discovery_reports/
   trace_reports/
   implementation_reports/
@@ -126,6 +131,12 @@ planning/<run-name>/
 ```
 
 Every downstream subagent must receive the context packet path, relevant raw report paths, and specific source files to verify. Every downstream subagent must report what context it consumed, what it independently verified, what it corrected, and what new context should be added to the packet.
+
+Telemetry-enabled workflows should also preserve observable model/workflow behavior. The experimental plugin records visible reasoning parts, `task` tool handoff prompts, `subtask` parts if emitted by OpenCode, tool events, command events, and session/message events under `.opencode/telemetry/sessions/<session-id>/` by default. If `ORC_TELEMETRY_DIR` is set, it writes there instead.
+
+Do not depend on hidden model internals. Use visible reasoning parts, subagent handoffs, tool traces, reports, and explicit rationale sections for optimization.
+
+Every major decision should include a concise `Decision Rationale`. Every subagent report should include an `Execution Rationale` section describing why it inspected specific files, ran specific commands, skipped areas, and whether the handoff was clear.
 
 If any downstream subagent finds stale, wrong, missing, or conflicting context, update `context_packet.md` before continuing the next wave.
 

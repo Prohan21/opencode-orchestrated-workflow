@@ -57,6 +57,7 @@ Be frank and critical. If the user's proposed path is weaker than another implem
 - Do not dispatch implementation, evaluation, integration, or holistic review work without a current `context_packet.md` or equivalent planning artifact reference.
 - Do not dispatch implementation workers unless the run mode allows source editing.
 - Do not dispatch `wf-integrate` unless source files were changed or the user explicitly asks for a planning-artifact integration review.
+- If telemetry is enabled, preserve observable workflow data for optimization, but do not depend on hidden model internals. Use visible reasoning parts, `task` tool handoffs, `subtask` parts if emitted by OpenCode, tool events, reports, and explicit rationale sections as optimization inputs.
 
 ## Run modes
 
@@ -115,6 +116,8 @@ All modes should produce or maintain:
 - `decision_log.md`: decisions made, decision owner, rationale, and open decisions.
 - `risk_register.md`: risk, impact, probability, mitigation, owner, and validation.
 - `validation_strategy.md`: checks, tests, commands, live validation needs, and acceptance criteria.
+- `telemetry/run_manifest.md`: selected mode, mutation policy, planning module, expected telemetry location, and notable workflow decisions.
+- `telemetry/optimization_notes.md`: workflow friction, unclear handoffs, over-reading, under-reading, missed gates, poor parallelism, and optimization ideas observed during the run.
 
 For `audit-roadmap`, require:
 
@@ -148,6 +151,35 @@ For `implementation` or `implementation-after-approval`, require:
 For `review-only`, require the smallest report set that answers the review request, plus `context_packet.md` if later phases may consume the work.
 
 Planning is not complete until the artifacts contain enough detail for a new agent with no hidden context to execute or evaluate the next phase.
+
+## Telemetry and optimization
+
+This package may include an OpenCode telemetry plugin that records observable events under `.opencode/telemetry/sessions/<session-id>/` by default, or under `ORC_TELEMETRY_DIR` if that environment variable is set.
+
+The plugin is expected to capture:
+
+- Visible `reasoning` message parts when the provider exposes them.
+- `task` tool parts containing subagent handoff prompts and child session IDs.
+- `subtask` parts containing subagent handoff prompts if OpenCode emits them.
+- Tool parts and tool hook inputs/outputs.
+- Command execution events.
+- Session, message, todo, and permission events.
+
+The orchestrator should also create planning-module telemetry artifacts. Do not wait for perfect telemetry before doing useful work.
+
+Every major orchestration decision should have a concise, observable rationale in the planning artifacts or final summary:
+
+```md
+## Decision Rationale
+- Mode selection:
+- Mutation policy:
+- Subagents dispatched:
+- Implementation gate decision:
+- Parallelization decision:
+- Evidence that would change this decision:
+```
+
+Every subagent handoff should request an `Execution Rationale` section in the returned report so workflow optimization can identify confusion, waste, or missing context.
 
 ## Source inspection rule
 
@@ -183,6 +215,9 @@ planning/<run-name>/
   decision_log.md
   risk_register.md
   validation_strategy.md
+  telemetry/
+    run_manifest.md
+    optimization_notes.md
   discovery_reports/
   trace_reports/
   implementation_reports/
@@ -231,7 +266,7 @@ Every subagent receiving prior context must independently verify the claims it r
 5. Synthesize only from subagent reports and verified source references.
 6. Ask clarifying questions using the `question` tool only when the answers materially affect the implementation or validation path.
 7. Invoke `planning-with-files` directly. Tell it to create or use the selected self-contained planning module/folder for this orchestration run, never overwrite existing planning files, and produce the detailed planning artifacts required for the selected mode. Follow the skill's actual artifact instructions once loaded.
-8. Create or update `context_packet.md` in the planning module from discovery reports, trace reports, clarifying answers, and relevant source references.
+8. Create or update `context_packet.md` in the planning module from discovery reports, trace reports, clarifying answers, and relevant source references. Create or update telemetry planning artifacts if telemetry is enabled or requested.
 9. If the mode is `audit-roadmap`, `greenfield-plan`, or `review-only`, dispatch holistic review for the produced assessment or plan, then stop and summarize without implementation.
 10. If the mode is `implementation-after-approval`, summarize the plan, risks, waves, and decision points, then ask the user for approval before dispatching implementation workers.
 11. Use those planning artifacts and instructions to define implementation waves with explicit parallel groups only when the mode is `implementation` or the user approved `implementation-after-approval`.
@@ -456,6 +491,7 @@ Your final answer should include:
 - Run mode and mutation policy used.
 - `planning-with-files` status.
 - Planning module path and key artifacts produced.
+- Telemetry status and expected telemetry location.
 - Waves completed.
 - Parallel groups completed and any serial work rationale.
 - Whether implementation was intentionally skipped because the mode was audit, greenfield planning, review-only, or awaiting approval.
