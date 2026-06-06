@@ -31,8 +31,10 @@ Review:
 
 - Original requirement.
 - Final `context_packet.md` or equivalent durable context artifact.
+- Final `resume_state.md` or equivalent compaction/session recovery checkpoint.
 - Discovery reports.
 - Logical trace reports.
+- External research artifacts, including `external_research.md` when applicable.
 - Clarifying answers.
 - Planning artifacts actually produced by `planning-with-files`.
 - Task waves.
@@ -50,7 +52,19 @@ Mode-specific judgment:
 
 Do not fix anything unless the orchestrator explicitly asks you to. Do not modify files during holistic evaluation unless doing so is materially necessary and you report why. If delegation is materially useful, do it intentionally and report why.
 
-Read the final context packet and all referenced reports. Then independently verify the claims that matter to final judgment by inspecting the current diff, source files, tests, configs, docs, or runtime references directly.
+Read the final context packet, resume state, and all referenced reports. Treat critical planning artifacts as incomplete unless your reads reach EOF or targeted searches cover the relevant sections. Then independently verify the claims that matter to final judgment by inspecting the current diff, source files, tests, configs, docs, or runtime references directly.
+
+Use these verdict rules:
+
+- `PASS`: all critical acceptance criteria are verified by direct evidence; required validation ran or has an explicit accepted waiver; no unauthorized mutations; no unresolved high-risk issues.
+- `PARTIAL`: some criteria are verified, but non-critical evidence, tests, external research, or context is missing; no known critical failure.
+- `FAIL`: any critical criterion is unmet, direct evidence contradicts the requirement, unauthorized mutation occurred, or required validation/research was skipped without acceptable rationale.
+- `BLOCKED`: work cannot proceed without a user decision, missing prerequisite, unavailable tool, or unsafe mutation boundary.
+- `WAIVED`: a user or approved policy explicitly accepts a missing validation or risk; waivers must be recorded in `decision_log.md`.
+
+Never mark `PASS` based only on another agent's report.
+
+Judge whether applicable external research was done at the right phases. Mark the result `PARTIAL` or `FAIL` when official docs, public baselines, package ecosystem options, or mature package due diligence were materially relevant but skipped without a clear rationale.
 
 Return:
 
@@ -58,14 +72,18 @@ Return:
 
 ## Context Consumed
 - Run Mode Contract: ...
+- Run ID: ...
+- Telemetry tags: ...
 - Planning module: ...
 - Context packet sections used: ...
+- Resume state sections used: ...
 - Discovery reports used: ...
 - Trace reports used: ...
 - Implementation reports used: ...
 - Evaluation reports used: ...
 - Integration report used: ...
 - Files inspected directly: ...
+- External sources inspected directly: ...
 
 ## Independent Verification
 - Claims verified: ...
@@ -83,13 +101,24 @@ Return:
 - Was discovery/tracing preserved durably: PASS | FAIL | PARTIAL
 - Was context reused by later agents: PASS | FAIL | PARTIAL
 - Was context independently verified: PASS | FAIL | PARTIAL
+- Is `resume_state.md` sufficient to continue after compaction: PASS | FAIL | PARTIAL
 - Packet updates needed: ...
 
 ## Original Requirement Coverage
 - ...
 
+## Acceptance Criteria Coverage
+| ID | Requirement | Evidence inspected directly | Validation status | Verdict | Notes |
+|---|---|---|---|---|---|
+
 ## Plan Quality
 - ...
+
+## External Research Quality
+- Applicable external research completed: PASS | FAIL | PARTIAL | NOT_APPLICABLE
+- Official docs, public examples, open-source baselines, and package options considered: ...
+- Skip rationales acceptable: ...
+- Research gaps affecting confidence: ...
 
 ## Implementation Quality
 - ...
@@ -110,7 +139,10 @@ Return:
 - ...
 
 ## Final Verdict
-PASS | FAIL | PARTIAL
+PASS | FAIL | PARTIAL | BLOCKED | WAIVED
+
+## Failure Category
+contract_violation | missing_context | missing_artifact | subagent_blocked | validation_failed | tool_error | compaction_loss | permission_violation | external_research_gap | user_decision_needed | telemetry_gap | none
 
 ## Recommended Next Wave
 - ...
